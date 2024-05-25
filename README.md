@@ -1,8 +1,9 @@
-# React + Vite
+### 1. Project 구성
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript, Axios(API 통신), MUI(UI Tool)
 
-Currently, two official plugins are available:
+### 2. 실행 방법
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 'npm install' : 프로젝트에 필요한 모듈 설치
+- 'npm run dev' : 프로젝트 실행
+- 'npm run build' : 프로젝트 빌드
