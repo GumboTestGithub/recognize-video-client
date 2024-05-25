@@ -5,6 +5,8 @@ import StepLabel from "@mui/material/StepLabel";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import SendingVideo from "./SendingVideo.tsx";
+import VideoRecord from "./VideoRecord.tsx";
+import AnalysisComplete from "./AnalysisComplete.tsx";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const TEST_MILLI_SECOND = 5000;
@@ -38,10 +40,9 @@ const Camera = () => {
             <StepLabel>결과</StepLabel>
           </Step>
         </Stepper>
-          <SendingVideo remainMilliSecond={TEST_MILLI_SECOND} />
-        {/*{activeStep === 0 && <VideoRecord sendVideo={sendVideo} />}*/}
-        {/*{activeStep === 1 && <SendingVideo remainMilliSecond={TEST_MILLI_SECOND} />}*/}
-        {/*{activeStep === 2 && <AnalysisComplete />}*/}
+        {activeStep === 0 && <VideoRecord sendVideo={sendVideo} />}
+        {activeStep === 1 && <SendingVideo remainMilliSecond={TEST_MILLI_SECOND} />}
+        {activeStep === 2 && <AnalysisComplete />}
       </Box>
     </ContentWrapper>
   );

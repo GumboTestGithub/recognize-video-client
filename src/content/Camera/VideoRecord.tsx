@@ -8,41 +8,47 @@ interface Props {
 const VideoRecord: FC<Props> = ({sendVideo}) => {
     const [recording, setRecording] = useState(false);
     const [videoURL, setVideoURL] = useState('');
-    const mediaRecorderRef = useRef(null);
-    const videoRef = useRef(null);
-    const recordedChunks = useRef([]);
+    const mediaRecorderRef = useRef<{recorder?: MediaRecorder}>({});
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const recordedChunks = useRef<Blob[]>([]);
 
 
     const startRecording = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        videoRef.current.srcObject = stream;
-        mediaRecorderRef.current = new MediaRecorder(stream, {
-            mimeType: 'video/webm',
-        });
+        if(videoRef.current && mediaRecorderRef.current?.recorder && recordedChunks.current) {
 
-        mediaRecorderRef.current.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-                recordedChunks.current.push(event.data);
-            }
-        };
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 
-        mediaRecorderRef.current.onstop = () => {
-            const blob = new Blob(recordedChunks.current, {
-                type: 'video/webm',
+            videoRef.current.srcObject = stream;
+            mediaRecorderRef.current.recorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm',
             });
-            const url = URL.createObjectURL(blob);
-            setVideoURL(url);
-            recordedChunks.current = [];
-        };
 
-        mediaRecorderRef.current.start();
-        setRecording(true);
+            mediaRecorderRef.current.recorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.current.push(event.data);
+                }
+            };
+
+            mediaRecorderRef.current.recorder.onstop = () => {
+                const blob = new Blob(recordedChunks.current, {
+                    type: 'video/webm',
+                });
+                const url = URL.createObjectURL(blob);
+                setVideoURL(url);
+                recordedChunks.current = [];
+            };
+
+            mediaRecorderRef.current.recorder.start();
+            setRecording(true);
+        }
     };
 
     const stopRecording = () => {
-        mediaRecorderRef.current.stop();
-        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-        setRecording(false);
+        if(mediaRecorderRef.current.recorder && videoRef.current && videoRef.current.srcObject) {
+            mediaRecorderRef.current.recorder.stop();
+            (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+            setRecording(false);
+        }
     };
 
 
