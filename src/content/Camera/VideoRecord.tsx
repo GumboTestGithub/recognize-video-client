@@ -14,7 +14,7 @@ const VideoRecord: FC<Props> = ({sendVideo}) => {
 
 
     const startRecording = async () => {
-        if(videoRef.current && mediaRecorderRef.current?.recorder && recordedChunks.current) {
+        if(videoRef.current) {
 
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 
