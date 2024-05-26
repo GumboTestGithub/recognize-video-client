@@ -1,60 +1,111 @@
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 
 interface Props {
   sendVideo: () => void;
 }
 
-const VideoRecord: FC<Props> = ({sendVideo}) => {
+const VideoRecord: FC<Props> = ({ sendVideo }) => {
     const [recording, setRecording] = useState(false);
     const [videoURL, setVideoURL] = useState('');
-    const mediaRecorderRef = useRef<{recorder?: MediaRecorder}>({});
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const mediaRecorderRef = useRef<{ recorder?: MediaRecorder }>({});
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const recordedChunks = useRef<Blob[]>([]);
+    const streamRef = useRef<MediaStream | null>(null);
 
+    useEffect(() => {
+        let animationFrameId: number;
+
+        const drawCanvas = () => {
+            if (canvasRef.current && streamRef.current) {
+                const ctx = canvasRef.current.getContext('2d');
+                const video = document.createElement('video');
+                video.srcObject = streamRef.current;
+                video.play();
+
+                video.onloadedmetadata = () => {
+                    canvasRef.current!.width = video.videoWidth;
+                    canvasRef.current!.height = video.videoHeight;
+
+                    const drawFrame = () => {
+                        if (ctx) {
+                            ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                            animationFrameId = requestAnimationFrame(drawFrame);
+                        }
+                    };
+                    drawFrame();
+                };
+            }
+        };
+
+        if (recording) {
+            drawCanvas();
+        } else {
+            cancelAnimationFrame(animationFrameId);
+        }
+
+        return () => cancelAnimationFrame(animationFrameId);
+    }, [recording]);
 
     const startRecording = async () => {
-        if(videoRef.current) {
-
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-
-            videoRef.current.srcObject = stream;
-            mediaRecorderRef.current.recorder = new MediaRecorder(stream, {
-                mimeType: 'video/webm',
-            });
-
-            mediaRecorderRef.current.recorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    recordedChunks.current.push(event.data);
-                }
-            };
-
-            mediaRecorderRef.current.recorder.onstop = () => {
-                const blob = new Blob(recordedChunks.current, {
-                    type: 'video/webm',
+        if (canvasRef.current) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
                 });
-                const url = URL.createObjectURL(blob);
-                setVideoURL(url);
-                recordedChunks.current = [];
-            };
+                console.log(navigator.mediaDevices)
+                streamRef.current = stream;
+                let options
+                console.log(MediaRecorder)
+                if (MediaRecorder.isTypeSupported('video/webm; codecs=vp9')) {
+                    options = {mimeType: 'video/webm; codecs=vp9'};
+                } else  if (MediaRecorder.isTypeSupported('video/webm')) {
+                    options = {mimeType: 'video/webm'};
+                } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+                    options = {mimeType: 'video/mp4', videoBitsPerSecond : 100000};
+                } else {
+                    console.error("no suitable mimetype found for this device");
+                }
+                mediaRecorderRef.current.recorder = new MediaRecorder(stream, options);
 
-            mediaRecorderRef.current.recorder.start();
-            setRecording(true);
+                mediaRecorderRef.current.recorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.current.push(event.data);
+                    }
+                };
+
+                mediaRecorderRef.current.recorder.onstop = () => {
+                    const blob = new Blob(recordedChunks.current, {
+                        type: 'video/webm',
+                    });
+                    const url = URL.createObjectURL(blob);
+                    setVideoURL(url);
+                    recordedChunks.current = [];
+                };
+
+                mediaRecorderRef.current.recorder.start();
+                setRecording(true);
+            } catch (err) {
+                console.error("Error accessing media devices.", err);
+            }
         }
     };
 
     const stopRecording = () => {
-        if(mediaRecorderRef.current.recorder && videoRef.current && videoRef.current.srcObject) {
+        if (mediaRecorderRef.current.recorder && streamRef.current) {
             mediaRecorderRef.current.recorder.stop();
-            (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+            streamRef.current.getTracks().forEach(track => track.stop());
             setRecording(false);
         }
     };
 
-
     return (
         <div>
-            <video ref={videoRef} autoPlay muted style={{ width: '100%' }} />
+            <canvas ref={canvasRef} style={{ width: '100%' }} />
             <div>
                 {recording ? (
                     <Button onClick={stopRecording}>녹화 완료</Button>
@@ -71,7 +122,6 @@ const VideoRecord: FC<Props> = ({sendVideo}) => {
             )}
         </div>
     );
-
 }
 
 export default VideoRecord;
