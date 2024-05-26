@@ -1,4 +1,4 @@
-import ContentWrapper from "../ContentWrapper.tsx";
+import ContentWrapper from "./ContentWrapper.tsx";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";

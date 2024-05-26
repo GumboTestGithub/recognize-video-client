@@ -1,4 +1,4 @@
-import ContentWrapper from "../ContentWrapper.tsx";
+import ContentWrapper from "./ContentWrapper.tsx";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { Typography } from "@mui/material";

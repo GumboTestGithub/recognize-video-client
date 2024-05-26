@@ -4,9 +4,9 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import SendingVideo from "./SendingVideo.tsx";
+import SendingVideo from "../SendingVideo.tsx";
 import VideoRecord from "./VideoRecord.tsx";
-import AnalysisComplete from "./AnalysisComplete.tsx";
+import AnalysisComplete from "../AnalysisComplete.tsx";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const TEST_MILLI_SECOND = 5000;
