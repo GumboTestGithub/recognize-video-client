@@ -1,50 +1,70 @@
-import ContentWrapper from "../ContentWrapper.tsx";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Box from "@mui/material/Box";
 import { useState } from "react";
-import SendingVideo from "../SendingVideo.tsx";
+import SendingVideo from "../Common/SendingVideo.tsx";
 import VideoRecord from "./VideoRecord.tsx";
-import AnalysisComplete from "../AnalysisComplete.tsx";
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const TEST_MILLI_SECOND = 5000;
+import Result from "../Common/Result.tsx";
+import {
+  ApiResponse,
+  TEST_MILLI_SECOND,
+  uploadVideo,
+} from "../../service/uploadVideo.ts";
+import Stack from "@mui/material/Stack";
 
 const Camera = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [file, setFile] = useState<File | null>(null);
+  const [remainMilliSecond, setRemainMilliSecond] = useState(0);
+  const [result, setResult] = useState<ApiResponse | null>(null);
 
-  const sendVideo = async () => {
+  const handleVideoSendClick = async () => {
+    if (file) {
+      setRemainMilliSecond(TEST_MILLI_SECOND);
       setActiveStep(1);
-      await sleep(TEST_MILLI_SECOND);
+      const response = await uploadVideo(file);
+      setResult(response);
       setActiveStep(2);
-  }
+    }
+  };
 
   return (
-    <ContentWrapper>
-      <Box
-        sx={{
-          width: "100%",
-          px: "30px",
-          boxSizing: "border-box",
-        }}
-      >
+    <Stack
+      sx={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <Stack sx={{ height: "50px" }} justifyContent="center">
         <Stepper activeStep={activeStep}>
           <Step>
-            <StepLabel>촬영</StepLabel>
+            <StepLabel>Shoot</StepLabel>
           </Step>
           <Step>
-            <StepLabel>식별화</StepLabel>
+            <StepLabel>Analyze</StepLabel>
           </Step>
           <Step>
-            <StepLabel>결과</StepLabel>
+            <StepLabel>Result</StepLabel>
           </Step>
         </Stepper>
-        {activeStep === 0 && <VideoRecord sendVideo={sendVideo} />}
-        {activeStep === 1 && <SendingVideo remainMilliSecond={TEST_MILLI_SECOND} />}
-        {activeStep === 2 && <AnalysisComplete />}
-      </Box>
-    </ContentWrapper>
+      </Stack>
+      <Stack sx={{ position: "relative", height: "calc(100vh - 50px)" }}>
+        {activeStep === 0 && (
+          <VideoRecord
+            file={file}
+            setFile={setFile}
+            onSendClick={handleVideoSendClick}
+          />
+        )}
+        {activeStep !== 0 &&
+          (result === null ? (
+            <SendingVideo remainMilliSecond={remainMilliSecond} />
+          ) : (
+            <Result result={result} />
+          ))}
+      </Stack>
+    </Stack>
   );
 };
 

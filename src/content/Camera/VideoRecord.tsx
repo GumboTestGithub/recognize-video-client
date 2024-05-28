@@ -1,16 +1,17 @@
 import { FC, useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 
 interface Props {
-  sendVideo: () => void;
+  file: File | null;
+  setFile: (file: File | null) => void;
+  onSendClick: () => void;
 }
 
-const VideoRecord: FC<Props> = ({ sendVideo }) => {
+const VideoRecord: FC<Props> = ({ file, setFile, onSendClick }) => {
     const [recording, setRecording] = useState(false);
-    const [videoURL, setVideoURL] = useState('');
-    const mediaRecorderRef = useRef<{ recorder?: MediaRecorder }>({});
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const recordedChunks = useRef<Blob[]>([]);
     const streamRef = useRef<MediaStream | null>(null);
 
     useEffect(() => {
@@ -24,16 +25,18 @@ const VideoRecord: FC<Props> = ({ sendVideo }) => {
                 video.play();
 
                 video.onloadedmetadata = () => {
-                    canvasRef.current!.width = video.videoWidth;
-                    canvasRef.current!.height = video.videoHeight;
+                    if (canvasRef.current) {
+                        canvasRef.current.width = video.videoWidth;
+                        canvasRef.current.height = video.videoHeight;
 
-                    const drawFrame = () => {
-                        if (ctx) {
-                            ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-                            animationFrameId = requestAnimationFrame(drawFrame);
-                        }
-                    };
-                    drawFrame();
+                        const drawFrame = () => {
+                            if (ctx) {
+                                ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                                animationFrameId = requestAnimationFrame(drawFrame);
+                            }
+                        };
+                        drawFrame();
+                    }
                 };
             }
         };
@@ -53,41 +56,41 @@ const VideoRecord: FC<Props> = ({ sendVideo }) => {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
                     }
                 });
-                console.log(navigator.mediaDevices)
-                streamRef.current = stream;
-                let options
-                console.log(MediaRecorder)
-                if (MediaRecorder.isTypeSupported('video/webm; codecs=vp9')) {
-                    options = {mimeType: 'video/webm; codecs=vp9'};
-                } else  if (MediaRecorder.isTypeSupported('video/webm')) {
-                    options = {mimeType: 'video/webm'};
-                } else if (MediaRecorder.isTypeSupported('video/mp4')) {
-                    options = {mimeType: 'video/mp4', videoBitsPerSecond : 100000};
-                } else {
-                    console.error("no suitable mimetype found for this device");
-                }
-                mediaRecorderRef.current.recorder = new MediaRecorder(stream, options);
 
-                mediaRecorderRef.current.recorder.ondataavailable = (event) => {
+                streamRef.current = stream;
+
+                let options;
+                if (MediaRecorder.isTypeSupported('video/webm; codecs=vp9')) {
+                    options = { mimeType: 'video/webm; codecs=vp9' };
+                } else if (MediaRecorder.isTypeSupported('video/webm')) {
+                    options = { mimeType: 'video/webm' };
+                } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+                    options = { mimeType: 'video/mp4', videoBitsPerSecond: 100000 };
+                } else {
+                    console.error("No suitable mimetype found for this device");
+                    return;
+                }
+
+                mediaRecorderRef.current = new MediaRecorder(stream, options);
+
+                const chunks: Blob[] = [];
+
+                mediaRecorderRef.current.ondataavailable = (event) => {
                     if (event.data.size > 0) {
-                        recordedChunks.current.push(event.data);
+                        chunks.push(event.data);
                     }
                 };
 
-                mediaRecorderRef.current.recorder.onstop = () => {
-                    const blob = new Blob(recordedChunks.current, {
+                mediaRecorderRef.current.onstop = () => {
+                    const blob = new Blob(chunks, {
                         type: 'video/webm',
                     });
-                    const url = URL.createObjectURL(blob);
-                    setVideoURL(url);
-                    recordedChunks.current = [];
+                    setFile(new File([blob], 'recording.webm', { type: 'video/webm' }));
                 };
 
-                mediaRecorderRef.current.recorder.start();
+                mediaRecorderRef.current.start();
                 setRecording(true);
             } catch (err) {
                 console.error("Error accessing media devices.", err);
@@ -96,31 +99,35 @@ const VideoRecord: FC<Props> = ({ sendVideo }) => {
     };
 
     const stopRecording = () => {
-        if (mediaRecorderRef.current.recorder && streamRef.current) {
-            mediaRecorderRef.current.recorder.stop();
+        if (mediaRecorderRef.current && streamRef.current) {
+            mediaRecorderRef.current.stop();
             streamRef.current.getTracks().forEach(track => track.stop());
             setRecording(false);
         }
     };
 
     return (
-        <div>
-            <canvas ref={canvasRef} style={{ width: '100%' }} />
-            <div>
-                {recording ? (
-                    <Button onClick={stopRecording}>녹화 완료</Button>
-                ) : (
-                    <Button onClick={startRecording}>녹화 시작</Button>
-                )}
-            </div>
-            {videoURL && (
-                <div>
-                    <h3>저장된 화면</h3>
-                    <video src={videoURL} controls style={{ width: '100%' }} />
-                    <Button onClick={sendVideo}>Send Video</Button>
-                </div>
+        <Stack sx={{width: '100%', height: '100%', p: 2}} justifyContent='center' alignItems='center' gap={5}>
+            {!file ? (
+                <>
+                    <canvas ref={canvasRef} style={{width: '100%'}}/>
+                    {recording ? (
+                        <Button onClick={stopRecording} fullWidth variant='contained' color='warning'>record stop</Button>
+                    ) : (
+                        <Button onClick={startRecording} fullWidth variant='contained'>record start</Button>
+                    )}
+                </>
+                )
+                : (
+                    <Stack gap={2}>
+                        <video src={URL.createObjectURL(file)} controls style={{ width: '100%' }} />
+                        <Stack flexDirection='row' gap={1} justifyContent='center'>
+                            <Button onClick={() => setFile(null)} fullWidth variant='contained' color='error'>Retake</Button>
+                            <Button onClick={onSendClick} fullWidth variant='contained' >Send Video</Button>
+                        </Stack>
+                    </Stack>
             )}
-        </div>
+        </Stack>
     );
 }
 

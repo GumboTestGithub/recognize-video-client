@@ -1,13 +1,17 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import Camera from "./Camera/Camera.tsx";
 import GalleryContent from "./Gallery/Gallery.tsx";
 import Main from "./Main/Main.tsx";
 
-type CurrentContent = "main" | "camera" | "gallery";
+export type CurrentContent = "main" | "camera" | "gallery";
 
-const Content: FC = () => {
+interface Props {
+    currentContent: CurrentContent;
+    setCurrentContent: (content: CurrentContent) => void;
+}
 
-    const [currentContent, setCurrentContent] = useState<CurrentContent>("main");
+const Content: FC<Props> = ({currentContent, setCurrentContent}) => {
+
 
     if(currentContent === "main") {
         return <Main onCameraClick={() => setCurrentContent('camera')} onGalleryClick={() => setCurrentContent('gallery')} />;

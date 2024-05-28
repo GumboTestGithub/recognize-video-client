@@ -1,19 +1,20 @@
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useRef } from "react";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 
 interface Props {
-  sendVideo: () => void;
+  file: File | null;
+  setFile: (file: File | null) => void;
+  onSendClick: () => void;
 }
 
-const SelectFile: FC<Props> = ({sendVideo}) => {
-    const [videoURL, setVideoURL] = useState('');
+const SelectFile: FC<Props> = ({file, setFile, onSendClick}) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            const url = URL.createObjectURL(file);
-            setVideoURL(url);
+            setFile(file);
         }
     };
 
@@ -23,24 +24,37 @@ const SelectFile: FC<Props> = ({sendVideo}) => {
         }
     };
 
+    useEffect(() => {
+        return () => {
+            if (file) {
+                URL.revokeObjectURL(URL.createObjectURL(file));
+            }
+        };
+    }, [file]);
+
     return (
-        <div>
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept="video/*"
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
-            />
-            <Button onClick={openFilePicker}>갤러리에서 동영상 가져오기</Button>
-            {videoURL && (
-                <div>
-                    <h3>선택한 동영상</h3>
-                    <video src={videoURL} controls style={{ width: '100%' }} />
-                    <Button onClick={sendVideo}>Send Video</Button>
-                </div>
+        <Stack sx={{width: '100%', height: '100%', p: 2}} justifyContent='center' alignItems='center' gap={5}>
+            {!file ? (
+                <>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="video/*"
+                        style={{display: 'none'}}
+                        onChange={handleFileChange}
+                    />
+                    <Button variant='contained' fullWidth onClick={openFilePicker}>Select</Button>
+                </>
+            ): (
+                <Stack gap={2}>
+                        <video src={URL.createObjectURL(file)} controls style={{width: '100%'}}/>
+                        <Stack flexDirection='row' gap={1} justifyContent='center'>
+                            <Button fullWidth variant='contained' color='error' onClick={() => setFile(null)}>Reselect</Button>
+                            <Button fullWidth variant='contained' onClick={onSendClick}>Send Video</Button>
+                        </Stack>
+                    </Stack>
             )}
-        </div>
+        </Stack>
     );
 
 }

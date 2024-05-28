@@ -1,8 +1,16 @@
 import Stack from "@mui/material/Stack";
-import Header from "./layout/Header.tsx";
-import Content from "./content/Content.tsx";
+import HomeButton from "./layout/HomeButton.tsx";
+import Content, { CurrentContent } from "./content/Content.tsx";
+import { useState } from "react";
 
 const App = () => {
+  const [currentContent, setCurrentContent] = useState<CurrentContent>("main");
+
+  const handleHomeClick = () => {
+    console.log("click");
+    setCurrentContent("main");
+  };
+
   return (
     <Stack
       direction="column"
@@ -25,8 +33,11 @@ const App = () => {
           height: "100%",
         }}
       >
-        <Header />
-        <Content />
+        {currentContent !== "main" && <HomeButton onClick={handleHomeClick} />}
+        <Content
+          currentContent={currentContent}
+          setCurrentContent={setCurrentContent}
+        />
       </Stack>
     </Stack>
   );

@@ -1,9 +1,9 @@
-import ContentWrapper from "./ContentWrapper.tsx";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 
 interface Props {
   remainMilliSecond: number;
@@ -21,7 +21,7 @@ const SendingVideo: FC<Props> = ({remainMilliSecond}) => {
     }, []);
     
   return (
-    <ContentWrapper>
+    <Stack sx={{width: '100%', height: '100%', p: 2}} alignItems='center' justifyContent='center' gap={2}>
         <Grid container spacing={1} alignItems='center'>
             <Grid item xs={11}>
                     <LinearProgress value={percent} variant="determinate"/>
@@ -31,10 +31,13 @@ const SendingVideo: FC<Props> = ({remainMilliSecond}) => {
                 </Grid>
             </Grid>
       <Box>
-        <Typography>AI가 영상을 분석 중입니다.</Typography>
-        <Typography>잠시만 기다려주세요.</Typography>
+        <Typography textAlign='center'>
+            AI is analyzing the video
+            <br/>
+            please wait for a moment
+        </Typography>
       </Box>
-    </ContentWrapper>
+    </Stack>
   );
 };
 
