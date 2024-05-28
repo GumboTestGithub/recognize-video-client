@@ -49,7 +49,7 @@ const VideoRecord: FC<Props> = ({ file, setFile, onSendClick }) => {
         }
 
         return () => cancelAnimationFrame(animationFrameId);
-    }, [recording, facingMode]);
+    }, [recording]);
 
     const startRecording = async () => {
         setFile(null);
@@ -87,7 +87,7 @@ const VideoRecord: FC<Props> = ({ file, setFile, onSendClick }) => {
 
                 mediaRecorderRef.current.onstop = () => {
                     const blob = new Blob(chunks, {
-                        type: 'video/webm',
+                        type: options.mimeType,
                     });
                     setFile(new File([blob], 'recording.webm', { type: 'video/webm' }));
                 };
