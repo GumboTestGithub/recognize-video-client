@@ -10,6 +10,7 @@ interface Props {
 
 const VideoRecord: FC<Props> = ({ file, setFile, onSendClick }) => {
     const [recording, setRecording] = useState(false);
+    const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
@@ -48,14 +49,15 @@ const VideoRecord: FC<Props> = ({ file, setFile, onSendClick }) => {
         }
 
         return () => cancelAnimationFrame(animationFrameId);
-    }, [recording]);
+    }, [recording, facingMode]);
 
     const startRecording = async () => {
+        setFile(null);
         if (canvasRef.current) {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: {
-                        facingMode: 'environment',
+                        facingMode,
                     }
                 });
 
@@ -106,13 +108,22 @@ const VideoRecord: FC<Props> = ({ file, setFile, onSendClick }) => {
         }
     };
 
+    const changeFacingMode = async () => {
+        setFacingMode(facingMode === 'user' ? 'environment' : 'user');
+        await startRecording();
+    }
+
+    if(file) {
+        console.log(URL.createObjectURL(file))
+    }
+
     return (
         <Stack sx={{width: '100%', height: '100%', p: 2}} justifyContent='center' alignItems='center' gap={5}>
             {!file ? (
                 <>
-                    <canvas ref={canvasRef} style={{width: '100%'}}/>
+                    <canvas ref={canvasRef} style={{height: '50vh',  width: 'auto'}}/>
                     {recording ? (
-                        <Button onClick={stopRecording} fullWidth variant='contained' color='warning'>record stop</Button>
+                            <Button onClick={stopRecording} fullWidth variant='contained' color='warning'>record stop</Button>
                     ) : (
                         <Button onClick={startRecording} fullWidth variant='contained'>record start</Button>
                     )}
@@ -120,7 +131,8 @@ const VideoRecord: FC<Props> = ({ file, setFile, onSendClick }) => {
                 )
                 : (
                     <Stack gap={2}>
-                        <video src={URL.createObjectURL(file)} controls style={{ width: '100%' }} />
+                        <video src={URL.createObjectURL(file)} controls style={{ width: '90vw', height: 'auto'  }} />
+                        <Button fullWidth variant='contained' color='secondary' onClick={changeFacingMode}>change camera</Button>
                         <Stack flexDirection='row' gap={1} justifyContent='center'>
                             <Button onClick={() => setFile(null)} fullWidth variant='contained' color='error'>Retake</Button>
                             <Button onClick={onSendClick} fullWidth variant='contained' >Send Video</Button>
