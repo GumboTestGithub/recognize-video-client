@@ -47,7 +47,7 @@ const SelectFile: FC<Props> = ({file, setFile, onSendClick}) => {
                 </>
             ): (
                 <Stack gap={2}>
-                        <video src={URL.createObjectURL(file)} controls style={{width: '100%'}}/>
+                        <video src={URL.createObjectURL(file)} controls style={{width: 'auto', height: '30vh'}}/>
                         <Stack flexDirection='row' gap={1} justifyContent='center'>
                             <Button fullWidth variant='contained' color='error' onClick={() => setFile(null)}>Reselect</Button>
                             <Button fullWidth variant='contained' onClick={onSendClick}>Send Video</Button>

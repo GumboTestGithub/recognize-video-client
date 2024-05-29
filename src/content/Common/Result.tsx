@@ -11,8 +11,8 @@ interface Props {
 }
 
 const Video = styled.video`
-    width: auto;
-    height: 30vh;
+    width: 100%;
+    height: auto;
     object-fit: cover;
 `
 
