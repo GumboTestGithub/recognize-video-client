@@ -6,9 +6,9 @@ import SendingVideo from "../Common/SendingVideo.tsx";
 import VideoRecord from "./VideoRecord.tsx";
 import Result from "../Common/Result.tsx";
 import {
-  ApiResponse,
-  TEST_MILLI_SECOND,
+  calculateUploadTime,
   uploadVideo,
+  UploadVideoResult,
 } from "../../service/uploadVideo.ts";
 import Stack from "@mui/material/Stack";
 
@@ -16,15 +16,20 @@ const Camera = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [remainMilliSecond, setRemainMilliSecond] = useState(0);
-  const [result, setResult] = useState<ApiResponse | null>(null);
+  const [result, setResult] = useState<UploadVideoResult | null>(null);
 
   const handleVideoSendClick = async () => {
     if (file) {
-      setRemainMilliSecond(TEST_MILLI_SECOND);
-      setActiveStep(1);
-      const response = await uploadVideo(file);
-      setResult(response);
-      setActiveStep(2);
+      try {
+        setRemainMilliSecond(calculateUploadTime(file));
+        setActiveStep(1);
+        const result = await uploadVideo(file);
+        setResult(result);
+        setActiveStep(2);
+      } catch {
+        alert("Failed to upload video");
+        setActiveStep(0);
+      }
     }
   };
 
@@ -61,7 +66,7 @@ const Camera = () => {
           (result === null ? (
             <SendingVideo remainMilliSecond={remainMilliSecond} />
           ) : (
-            <Result result={result} />
+            <Result file={file!} result={result} />
           ))}
       </Stack>
     </Stack>

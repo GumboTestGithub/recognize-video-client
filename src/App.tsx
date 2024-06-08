@@ -7,7 +7,6 @@ const App = () => {
   const [currentContent, setCurrentContent] = useState<CurrentContent>("main");
 
   const handleHomeClick = () => {
-    console.log("click");
     setCurrentContent("main");
   };
 

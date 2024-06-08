@@ -27,7 +27,7 @@ const SendingVideo: FC<Props> = ({remainMilliSecond}) => {
                     <LinearProgress value={percent} variant="determinate"/>
             </Grid>
                 <Grid item xs={1}>
-                    <Typography marginLeft='auto' variant="body2" color='grey'>{percent}%</Typography>
+                    <Typography marginLeft='auto' variant="body2" color='grey'>{percent.toFixed(0)}%</Typography>
                 </Grid>
             </Grid>
       <Box>
