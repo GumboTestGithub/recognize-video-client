@@ -98,10 +98,11 @@ const Result: FC<Props> = ({file, result}) => {
     >
       <Box flexShrink={0}>
         <Video
+            key={currentVideoUrl}
+            preload="auto"
           controls
-        >
-            <source key={Date.now()} src={currentVideoUrl} type="video/mp4"></source>
-        </Video>
+          src={currentVideoUrl}
+        />
       </Box>
       <Stack
         gap={2}
