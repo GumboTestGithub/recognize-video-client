@@ -12,7 +12,7 @@ export interface DeidentifitcationResponse {
 }
 
 export const deidentification = async (request: DeidentificationRequest): Promise<string> => {
-    const {data} = await axios.post<DeidentifitcationResponse>("https://is.taewonkim.store/api/de-identification", request, {
+    const {data} = await axios.post<DeidentifitcationResponse>("https://identity-safe.site/api/de-identification", request, {
         headers: {
             "Accept": "*/*",
             "Content-Type": "application/json",

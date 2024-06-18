@@ -44,13 +44,13 @@ const Gallery = () => {
       <Stack sx={{ height: "50px" }} justifyContent="center">
         <Stepper activeStep={activeStep}>
           <Step>
-            <StepLabel>Select</StepLabel>
+            <StepLabel>선택</StepLabel>
           </Step>
           <Step>
-            <StepLabel>Analyze</StepLabel>
+            <StepLabel>분석</StepLabel>
           </Step>
           <Step>
-            <StepLabel>Result</StepLabel>
+            <StepLabel>결과</StepLabel>
           </Step>
         </Stepper>
       </Stack>

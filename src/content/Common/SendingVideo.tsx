@@ -32,9 +32,9 @@ const SendingVideo: FC<Props> = ({remainMilliSecond}) => {
             </Grid>
       <Box>
         <Typography textAlign='center'>
-            AI is analyzing the video
+            AI가 비디오를 분석하고 있습니다.
             <br/>
-            please wait for a moment
+            잠시만 기다려주세요
         </Typography>
       </Box>
     </Stack>

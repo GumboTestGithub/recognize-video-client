@@ -43,7 +43,7 @@ const SelectFile: FC<Props> = ({file, setFile, onSendClick}) => {
                         style={{display: 'none'}}
                         onChange={handleFileChange}
                     />
-                    <Button variant='contained' fullWidth onClick={openFilePicker}>Select</Button>
+                    <Button variant='contained' fullWidth onClick={openFilePicker}>선택</Button>
                 </>
             ): (
                 <Stack gap={2}>
@@ -51,8 +51,8 @@ const SelectFile: FC<Props> = ({file, setFile, onSendClick}) => {
                             <source key={Date.now()} src={URL.createObjectURL(file)}></source>
                         </video>
                         <Stack flexDirection='row' gap={1} justifyContent='center'>
-                            <Button fullWidth variant='contained' color='error' onClick={() => setFile(null)}>Reselect</Button>
-                            <Button fullWidth variant='contained' onClick={onSendClick}>Send Video</Button>
+                            <Button fullWidth variant='contained' color='error' onClick={() => setFile(null)}>재선택</Button>
+                            <Button fullWidth variant='contained' onClick={onSendClick}>전송</Button>
                         </Stack>
                     </Stack>
             )}

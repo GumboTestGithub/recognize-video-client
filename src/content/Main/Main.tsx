@@ -55,9 +55,6 @@ const Main: FC<Props> = ({onCameraClick, onGalleryClick}) => {
                 </Grid>
             </Grid>
             <Typography variant='body1'>
-                Description1 <br/>
-                Description1 <br/>
-                Description1 <br/>
             </Typography>
     </Stack>
     )

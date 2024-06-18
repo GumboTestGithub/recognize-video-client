@@ -28,7 +28,7 @@ export const uploadVideo = async (file: File): Promise<UploadVideoResult> => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const { data} = await axios.post<ApiResponse>("https://is.taewonkim.store/api/video", formData, {
+    const { data} = await axios.post<ApiResponse>("https://identity-safe.site/api/video", formData, {
         headers: {
             "Accept": "*/*",
             "Content-Type": "multipart/form-data",
@@ -38,19 +38,19 @@ export const uploadVideo = async (file: File): Promise<UploadVideoResult> => {
     //
     // const data = {
     //     faces: {
-    //         1: "https://is.taewonkim.store/api/files/c29aa769-d32d-4734-964f-53fbd325c7fa.jpg",
-    //         2: "https://is.taewonkim.store/api/files/d6686c2c-fa9e-4216-9f96-fb13ece8e396.jpg",
-    //         3: "https://is.taewonkim.store/api/files/ca622c6f-4880-4cd7-9b2c-d1e256b64deb.jpg",
-    //         4: "https://is.taewonkim.store/api/files/8604c53c-4ba2-462f-95dc-fc02049ef781.jpg"
+    //         1: "https://identity-safe.site/api/files/c29aa769-d32d-4734-964f-53fbd325c7fa.jpg",
+    //         2: "https://identity-safe.site/api/files/d6686c2c-fa9e-4216-9f96-fb13ece8e396.jpg",
+    //         3: "https://identity-safe.site/api/files/ca622c6f-4880-4cd7-9b2c-d1e256b64deb.jpg",
+    //         4: "https://identity-safe.site/api/files/8604c53c-4ba2-462f-95dc-fc02049ef781.jpg"
     //     },
     //     license_plates: {
-    //         1: "https://is.taewonkim.store/api/files/5717757f-6f16-4710-9064-6c61f558092d.jpg",
-    //         5: "https://is.taewonkim.store/api/files/0f74c350-919e-46cf-b7b4-4b5ce395a764.jpg"
+    //         1: "https://identity-safe.site/api/files/5717757f-6f16-4710-9064-6c61f558092d.jpg",
+    //         5: "https://identity-safe.site/api/files/0f74c350-919e-46cf-b7b4-4b5ce395a764.jpg"
     //     },
     //     uuid: "cbfe2406-632e-4de5-aa0d-f2b205fbdd21",
     //     voices: {
-    //         0: "https://is.taewonkim.store/api/files/5cfe917c-4ad7-47d4-9a0d-a67b0bef86db.wav",
-    //         1: "https://is.taewonkim.store/api/files/c890c438-6c1d-4e88-9c8a-84f701013177.wav"
+    //         0: "https://identity-safe.site/api/files/5cfe917c-4ad7-47d4-9a0d-a67b0bef86db.wav",
+    //         1: "https://identity-safe.site/api/files/c890c438-6c1d-4e88-9c8a-84f701013177.wav"
     //     }
     // }
 

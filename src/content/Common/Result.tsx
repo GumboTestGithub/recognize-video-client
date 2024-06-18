@@ -113,7 +113,7 @@ const Result: FC<Props> = ({file, result}) => {
           backgroundColor: "#F6F6F6FF",
         }}
       >
-        <Typography>Recognized Face</Typography>
+        <Typography>인식된 얼굴</Typography>
         <Grid container spacing={1.5}>
           {faces.map(({ index, url }) => (
             <Grid
@@ -137,7 +137,7 @@ const Result: FC<Props> = ({file, result}) => {
                     justifyContent: "center",
                   }}
                 >
-                  Selected
+                  선택됨
                 </Box>
               )}
               <img src={url} alt={`face${index}`} width="100%" />
@@ -154,7 +154,7 @@ const Result: FC<Props> = ({file, result}) => {
           backgroundColor: "#F6F6F6FF",
         }}
       >
-        <Typography>Recognized Voice</Typography>
+        <Typography>인식된 음성</Typography>
         <Stack gap={1.5}>
           {voices.map(({ index, url }) => (
             <audio key={index} src={url} controls />
@@ -170,7 +170,7 @@ const Result: FC<Props> = ({file, result}) => {
           backgroundColor: "#F6F6F6FF",
         }}
       >
-        <Typography>Recognized Number Plate</Typography>
+        <Typography>인식된 번호판</Typography>
         <Grid container spacing={1}>
           {licensePlates.map(({ index, url }) => (
             <Grid
@@ -196,7 +196,7 @@ const Result: FC<Props> = ({file, result}) => {
                     justifyContent: "center",
                   }}
                 >
-                  Selected
+                  선택됨
                 </Box>
               )}
               <img src={url} alt={`face${index}`} width="100%" />
@@ -210,9 +210,9 @@ const Result: FC<Props> = ({file, result}) => {
         onClick={handleDeidentificationClick}
         disabled={isLoading}
       >
-        De-Identification
+        비식별화
       </Button>
-      {isLoading && <Typography>De-Identification in progress...</Typography>}
+      {isLoading && <Typography>비식별화가 진행 중 입니다....</Typography>}
       {deidentifiedUrl && (
         <>
           <Button
@@ -221,7 +221,7 @@ const Result: FC<Props> = ({file, result}) => {
             onClick={handleApplyClick}
             fullWidth
           >
-            {isApplied ? "Applied" : "Apply De-Identification"}
+            {isApplied ? "비식별화 적용됨" : "비식별화 적용"}
           </Button>
           <Grid container spacing={1}>
             <Grid item xs={6}>
@@ -231,7 +231,7 @@ const Result: FC<Props> = ({file, result}) => {
                 fullWidth
                 onClick={handleDownloadClick}
               >
-                Download
+                저장
               </Button>
             </Grid>
             <Grid item xs={6}>
@@ -241,7 +241,7 @@ const Result: FC<Props> = ({file, result}) => {
                 color="info"
                 onClick={handleShareClick}
               >
-                Share
+                공유
               </Button>
             </Grid>
           </Grid>
