@@ -50,7 +50,7 @@ const SelectFile: FC<Props> = ({file, setFile, onSendClick}) => {
                         <video controls style={{width: 'auto', height: '30vh'}}>
                             <source key={Date.now()} src={URL.createObjectURL(file)}></source>
                         </video>
-                        <Stack flexDirection='row' gap={1} justifyContent='center'>
+                        <Stack gap={1} justifyContent='center'>
                             <Button fullWidth variant='contained' color='error' onClick={() => setFile(null)}>재선택</Button>
                             <Button fullWidth variant='contained' onClick={onSendClick}>전송</Button>
                         </Stack>

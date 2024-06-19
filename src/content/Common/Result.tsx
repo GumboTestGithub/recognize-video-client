@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import { deidentification } from "../../service/deidentification.ts";
+import Checkbox from "@mui/material/Checkbox";
 
 interface Props {
   file: File;
@@ -24,6 +25,7 @@ const Result: FC<Props> = ({file, result}) => {
 
     const [selectedFaces, setSelectedFaces] = useState<number[]>([]);
     const [selectedLicensePlates, setSelectedLicensePlates] = useState<number[]>([]);
+    const [selectedVoices, setSelectedVoices] = useState<number[]>([]);
 
     const handleFaceClick = (index: number) => {
         if (selectedFaces.includes(index)) {
@@ -41,6 +43,14 @@ const Result: FC<Props> = ({file, result}) => {
         }
     }
 
+    const handleVoiceClick = (index: number) => {
+        if (selectedVoices.includes(index)) {
+            setSelectedVoices(selectedVoices.filter(i => i !== index));
+        } else {
+            setSelectedVoices([...selectedVoices, index]);
+        }
+    }
+
     const [isApplied, setIsApplied] = useState<boolean>(false);
     const [deidentifiedUrl, setDeidentifiedUrl] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +64,7 @@ const Result: FC<Props> = ({file, result}) => {
                 uuid: uuid,
                 faces: selectedFaces,
                 license_plates: selectedLicensePlates,
-                voices: []
+                voices: selectedVoices
             })
             setIsLoading(false)
             setDeidentifiedUrl(url)
@@ -156,8 +166,12 @@ const Result: FC<Props> = ({file, result}) => {
       >
         <Typography>인식된 음성</Typography>
         <Stack gap={1.5}>
+
           {voices.map(({ index, url }) => (
-            <audio key={index} src={url} controls />
+              <Stack flexDirection='row' alignItems='center' key={index}>
+            <audio src={url} controls />
+                  <Checkbox onClick={() => handleVoiceClick(index)} checked={selectedVoices.includes(index)} />
+              </Stack>
           ))}
         </Stack>
       </Stack>
